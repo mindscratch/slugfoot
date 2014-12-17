@@ -5,22 +5,22 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
-  "path"
 )
 
 func main() {
-  http.HandleFunc("/", HandleIndex)
+	http.HandleFunc("/", HandleIndex)
 	http.HandleFunc("/post", PostOnly(HandlePost))
-  log.Println("Listening on port 8080")
+	log.Println("Listening on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
 type handler func(w http.ResponseWriter, r *http.Request)
 
 func HandleIndex(w http.ResponseWriter, r *http.Request) {
-  log.Printf("Accept %s %s from %s\n", r.Method, r.URL, r.RemoteAddr)
-  io.WriteString(w, "hello world\n")
+	log.Printf("Accept %s %s from %s\n", r.Method, r.URL, r.RemoteAddr)
+	io.WriteString(w, "hello world\n")
 }
 
 func PostOnly(h handler) handler {
@@ -45,7 +45,7 @@ func HandlePost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-  log.Printf("Saving files to %s\n", dir)
+	log.Printf("Saving files to %s\n", dir)
 	//copy each part to destination.
 	for {
 		part, err := reader.NextPart()
@@ -64,7 +64,7 @@ func HandlePost(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-    log.Printf("created %s\n", dst.Name())
+		log.Printf("created %s\n", dst.Name())
 
 		if _, err := io.Copy(dst, part); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -72,5 +72,5 @@ func HandlePost(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	//display success message.
-  io.WriteString(w, "upload success")
+	io.WriteString(w, "upload success")
 }
